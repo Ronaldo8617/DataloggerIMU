@@ -1,4 +1,4 @@
-# Datalogger de Movimento com IMU para Raspberry Pi Pico W
+# Datalogger IMU para Raspberry Pi Pico W
 
 ## 📹 Demonstração
 🎬 [Assista ao vídeo da demonstração](https://youtu.be/NvOw4scISNc)
@@ -22,17 +22,6 @@
 ---
 
 ## 🛠️ Funcionalidades Obrigatórias
-
-- Leitura dos sensores AHT10 (temperatura/umidade) e BMP280 (temperatura/pressão)
-- Cálculo de altitude com base na pressão
-- Exibição dos dados no display OLED SSD1306
-- Navegação de páginas via botões
-- Conexão Wi-Fi e hospedagem de servidor web
-- Alertas visuais (LEDs) e sonoros (buzzer)
-
----
-
-## ✨ Funcionalidades Adicionais
 
 - Captura de Dados IMU: Leitura contínua dos dados de aceleração (eixos X, Y, Z) e giroscópio (eixos X, Y, Z) do sensor MPU6050 via I2C0.
 
