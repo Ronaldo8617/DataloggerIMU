@@ -1,22 +1,23 @@
-# 🌦️ Estação Meteorológica Inteligente com Raspberry Pi Pico W
+# Datalogger de Movimento com IMU para Raspberry Pi Pico W
 
 ## 📹 Demonstração
 🎬 [Assista ao vídeo da demonstração](https://youtu.be/NvOw4scISNc)
-
-O vídeo apresenta:
-- Visão geral do projeto
-- Interface local via OLED e controle por botões
-- Interface web com atualização de dados em tempo real
 
 ---
 
 ## 🎯 Objetivo do Projeto
 
-Desenvolver uma estação meteorológica capaz de:
-- Medir temperatura, umidade, pressão e altitude
-- Exibir os dados localmente via display OLED
-- Publicar os dados via interface web hospedada no próprio dispositivo
-- Emitir alertas visuais e sonoros quando os limites forem ultrapassados
+- Desenvolver um dispositivo portátil (datalogger) capaz de:
+
+- Capturar continuamente dados de movimento (aceleração e giroscópio) de um sensor IMU MPU6050.
+
+- Armazenar esses dados de forma estruturada em arquivos .csv em um cartão MicroSD.
+
+- Fornecer feedback em tempo real ao usuário através de um display OLED, LEDs RGB e um buzzer.
+
+- Permitir o controle da gravação e a navegação na tela via botões.
+
+- Possibilitar a posterior análise gráfica dos dados em um computador usando Python.
 
 ---
 
@@ -33,41 +34,69 @@ Desenvolver uma estação meteorológica capaz de:
 
 ## ✨ Funcionalidades Adicionais
 
-- Interface web embarcada com HTML pré-carregado
-- Histórico circular de leituras (com fallback para valores inválidos)
-- Detecção de anomalias com notificação no display e LEDs
+- Captura de Dados IMU: Leitura contínua dos dados de aceleração (eixos X, Y, Z) e giroscópio (eixos X, Y, Z) do sensor MPU6050 via I2C0.
+
+- Armazenamento em Cartão SD: Salvamento dos dados em formato .csv em arquivos sequenciais (ex: log_000.csv, log_001.csv) no cartão MicroSD, utilizando a biblioteca FatFs.
+
+- Interface Local (Display OLED SSD1306): Exibição de informações cruciais em tempo real, como:
+
+- Status do sistema (Ex: "Inicializando", "Aguardando", "Gravando...", "SD Nao Detectado").
+
+- Contador de amostras coletadas e tempo de gravação.
+
+- Dados brutos de aceleração, giroscópio e temperatura do IMU.
+
+- Feedback de ações do usuário (Ex: "Dados Salvos!").
+
+- Feedback Visual (LED RGB): Sinalização visual dos principais estados de operação do sistema:
+
+- Amarelo: Sistema inicializando / Montando cartão SD.
+
+- Verde: Sistema pronto para iniciar a captura / Dados salvos.
+
+- Vermelho: Captura de dados em andamento.
+
+- Azul (piscando): Acessando o cartão SD (leitura/gravação).
+
+- Roxo (piscando): Erro (Ex: Falha ao montar o cartão SD).
+
+- Alertas Sonoros (Buzzer): Emissão de bipes curtos para confirmar ações do usuário:
+
+- Um beep curto: Para "iniciar captura".
+
+- Dois beeps curtos: Para "parar captura".
+
+- Controle por Botões: Utilização de push buttons para controle total do dispositivo:
+
+- Botão A: Iniciar/Parar gravação de dados e alternar entre as páginas do display OLED.
+
+- Botão B: Entrar no modo BOOTSEL do Raspberry Pi Pico W para regravação do firmware.
 
 ---
 
 ## 📦 Componentes Utilizados
 
-| Componente          | Função                                   |
-|---------------------|------------------------------------------|
-| Raspberry Pi Pico W | Microcontrolador com Wi-Fi               |
-| AHT10               | Sensor de temperatura e umidade          |
-| BMP280              | Sensor de pressão e temperatura          |
-| OLED SSD1306 (I2C)  | Exibição local das leituras              |
-| LED RGB             | Indicação visual de alertas              |
-| Matriz de LEDs 5x5  | Indicadores personalizados               |
-| Buzzer              | Alerta sonoro                            |
-| Push Buttons        | Navegação e controle via interrupção     |
-
+- Raspberry Pi Pico W        
+- MPU6050             
+- OLED SSD1306 (I2C)              
+- LED RGB                       
+- Buzzer                                      
+- Push Buttons                           
+- Cartão MicroSD                      
+- Módulo Leitor SD          
 ---
 
 ## ⚙️ Compilação e Gravação
 
 ```bash
-git clone https://github.com/Ronaldo8617/EMeteorologica.git
-cd EMeteorologica
+git clone https://github.com/Ronaldo8617/DataloggerIMU.git
+cd DataloggerIMU
 mkdir build
 cd build
 cmake ..
 make
 ```
-## 🔧 Configuração Wi-Fi
-No código, defina as credenciais da sua rede:
-#define WIFI_SSID "SUA_REDE"
-#define WIFI_PASS "SUA_SENHA"
+
 ## 🚀 Gravação na Placa
 Compile e execute no VSCode com a placa bitdoglab conectada.
 Ou conecte o RP2040 segurando o botão BOOTSEL e copie o arquivo .uf2 da pasta build para o dispositivo montado.
@@ -77,18 +106,17 @@ Ou conecte o RP2040 segurando o botão BOOTSEL e copie o arquivo .uf2 da pasta b
 ```plaintext
 EMeteorologica/
 ├── lib/
-│   ├── font.h               # Fonte para o display
-│   ├── ssd1306.c/h          # Driver do display OLED
-│   ├── perifericos.h        # Controle dos periefericos 
-│   ├── display.h            # Funções de exibição
-│   ├── html.h               # Interface web (HTML embarcado)
-│   ├── webpage.h            # Gerenciamento da página web
-│   ├── matrixws.h           # Controle da matriz de LEDs
-│   ├── aht20.c/h            # Biblioteca do sensor AHT20
-│   ├── bmp280.c/h           # Biblioteca do sensor BMP280
-├── EMeteorologica.c         # Código principal
-├── CMakeLists.txt           # Configuração do projeto
-└── README.md                # Este arquivo
+│   ├── font.h              # Fonte para o display OLED
+│   ├── ssd1306.c/h         # Driver do display OLED
+│   ├── hw_config.h         # Configuração de hardware para o SD (SPI)
+│   ├── my_debug.h          # Funções de depuração
+│   ├── sd_card.h           # Driver para o cartão SD
+│   ├── ff.h                # Biblioteca FatFs (sistema de arquivos)
+│   ├── diskio.h            # Funções de E/S de disco para FatFs
+│   └── f_util.h            # Utilitários para FatFs
+├── DataloggerIMU.c         # Código principal do datalogger
+├── CMakeLists.txt          # Configuração do projeto (CMake)
+└── README.md               # Este arquivo
 ```
 ## 👨‍💻 Autor
 Nome: Ronaldo César Santos Rocha
