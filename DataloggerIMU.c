@@ -9,7 +9,7 @@
 #include "hardware/gpio.h"
 #include "hardware/rtc.h" // Para timestamp, se desejado
 #include "pico/time.h"    // Para get_absolute_time
-#include "pico/bootrom.h" // ADICIONADO: Para reset_usb_boot
+#include "pico/bootrom.h" //
 
 // Incluir as bibliotecas do FatFs e do SD Card
 #include "ff.h"
@@ -76,7 +76,7 @@ SystemState current_system_state = SYS_INITIALIZING;
 // --- Protótipos de Funções ---
 // Funções de Periféricos (Botoes, LEDs, Buzzer)
 void set_led_color(bool r, bool g, bool b);
-void blink_led(bool r, bool g, bool b, uint32_t delay_ms, uint32_t num_blinks); // CORRIGIDO: uint33_t para uint32_t
+void blink_led(bool r, bool g, bool b, uint32_t delay_ms, uint32_t num_blinks); 
 void tocar_nota(int frequencia, int duracao);
 void beep_curto();
 void beep_duplo();
@@ -95,7 +95,7 @@ bool unmount_sd_card();
 void update_display();
 
 // Funções de Controle de Botões
-bool is_button_pressed(uint gpio_pin, uint64_t *last_press_time); // CORRIGIDO: uint66_t para uint64_t
+bool is_button_pressed(uint gpio_pin, uint64_t *last_press_time); 
 void gpio_irq_handler_bootsel(uint gpio, uint32_t events); // Para o modo BOOTSEL
 
 // --- Funções de Periféricos (Botoes, LEDs, Buzzer) ---
@@ -107,8 +107,8 @@ void set_led_color(bool r, bool g, bool b) {
     gpio_put(LED_BLUE_PIN, b);
 }
 
-void blink_led(bool r, bool g, bool b, uint32_t delay_ms, uint32_t num_blinks) { // CORRIGIDO: uint33_t para uint32_t
-    for (uint32_t i = 0; i < num_blinks; i++) { // CORRIGIDO: uint32_t_t para uint32_t
+void blink_led(bool r, bool g, bool b, uint32_t delay_ms, uint32_t num_blinks) { 
+    for (uint32_t i = 0; i < num_blinks; i++) { 
         set_led_color(r, g, b);
         sleep_ms(delay_ms);
         set_led_color(false, false, false); // Desliga
@@ -291,7 +291,7 @@ void update_display() {
                 break;
         }
     } else if (current_display_page == 1) { // Página de Dados IMU (em tempo real)
-        ssd1306_draw_string(&ssd, "DADOS IMU (RAW)", 0, 0);
+        ssd1306_draw_string(&ssd, "DADOS IMU", 0, 0);
         ssd1306_draw_string(&ssd, "----------------", 0, 10);
 
         int16_t accel[3], gyro[3], temp;
